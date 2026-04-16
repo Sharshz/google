@@ -1,1 +1,31 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --color-bg: #0A0B0D;
+  --color-accent: #3b82f6;
+  --color-glass: rgba(255, 255, 255, 0.08);
+  --color-glass-border: rgba(255, 255, 255, 0.12);
+  --color-text-dim: rgba(255, 255, 255, 0.6);
+}
+
+@layer base {
+  body {
+    @apply bg-bg text-white font-sans antialiased;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-glass backdrop-blur-xl border border-glass-border;
+  }
+  
+  .viewfinder-grid {
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                repeating-conic-gradient(#1a1c20 0% 25%, #15171a 0% 50%) 50% / 40px 40px;
+  }
+
+  .scan-corner {
+    @apply absolute w-8 h-8 border-4 border-accent;
+  }
+}

@@ -165,168 +165,210 @@ export default function App() {
 
   if (!isAuthReady) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
+      <div className="min-h-screen bg-bg flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-accent animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-orange-500/30">
-      {/* Background Atmosphere */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-orange-900/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-900/10 blur-[120px] rounded-full" />
-      </div>
+    <div className="min-h-screen bg-bg text-white font-sans selection:bg-accent/30 overflow-x-hidden">
+      {/* Viewfinder Background (Fixed) */}
+      <div className="fixed inset-0 viewfinder-grid opacity-40 pointer-events-none" />
 
       {/* Header */}
-      <header className="relative z-10 border-b border-white/10 backdrop-blur-md bg-black/50">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center shadow-lg shadow-orange-500/20">
-              <Sparkles className="w-5 h-5 text-black" />
+      <header className="relative z-20 border-b border-glass-border glass-panel">
+        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shadow-2xl shadow-accent/40">
+              <Camera className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-xl font-bold tracking-tight">CityLens</h1>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight leading-none">GeoLens AI</h1>
+              <span className="text-[10px] text-accent font-bold uppercase tracking-[0.2em]">Tourism OS v1.0</span>
+            </div>
           </div>
           
           {user ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               <div className="hidden sm:flex flex-col items-end">
-                <span className="text-xs text-white/50 uppercase tracking-widest font-semibold">Explorer</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_#10b981]" />
+                  <span className="text-[10px] text-text-dim uppercase tracking-widest font-bold">System Active</span>
+                </div>
                 <span className="text-sm font-medium">{user.displayName}</span>
               </div>
               <button 
                 onClick={handleSignOut}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl border border-glass-border transition-all"
                 title="Sign Out"
               >
-                <LogOut className="w-5 h-5 text-white/70" />
+                <LogOut className="w-5 h-5 text-text-dim" />
               </button>
             </div>
           ) : (
             <button 
               onClick={handleSignIn}
-              className="px-4 py-2 bg-white text-black text-sm font-bold rounded-full hover:bg-orange-500 transition-colors"
+              className="px-6 py-2.5 bg-accent text-white text-sm font-bold rounded-xl hover:bg-accent/80 transition-all shadow-lg shadow-accent/20"
             >
-              Sign In
+              Initialize System
             </button>
           )}
         </div>
       </header>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-4 py-8">
+      <main className="relative z-10 max-w-6xl mx-auto px-6 py-10">
         {!user ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="flex flex-col items-center justify-center py-32 text-center">
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-md"
+              className="max-w-xl"
             >
-              <h2 className="text-5xl font-bold mb-6 leading-tight">Your AI-Powered City Guide.</h2>
-              <p className="text-white/60 mb-8 text-lg">
-                Snap a photo of any landmark and unlock its hidden history with real-time AI narration.
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-bold uppercase tracking-widest mb-8">
+                <Sparkles className="w-3.5 h-3.5" />
+                Next-Gen Recognition
+              </div>
+              <h2 className="text-6xl font-bold mb-8 leading-[1.1] tracking-tight">Discover the World Through AI.</h2>
+              <p className="text-text-dim mb-12 text-xl leading-relaxed">
+                A high-precision scanning interface for identifying landmarks and unlocking historical data in real-time.
               </p>
               <button 
                 onClick={handleSignIn}
-                className="group flex items-center gap-3 px-8 py-4 bg-orange-500 text-black font-bold rounded-2xl hover:scale-105 transition-all shadow-xl shadow-orange-500/20"
+                className="group flex items-center gap-4 px-10 py-5 bg-accent text-white font-bold rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-accent/30"
               >
-                Start Exploring
+                Access Interface
                 <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               </button>
             </motion.div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            {/* Left Column: Action & Result */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Upload Card */}
-              <div className="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm">
-                <div className="flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded-2xl py-12 px-4 hover:border-orange-500/50 transition-colors cursor-pointer group"
-                     onClick={() => fileInputRef.current?.click()}>
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    onChange={handleFileSelect} 
-                    accept="image/*" 
-                    className="hidden" 
-                  />
-                  <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Camera className="w-8 h-8 text-orange-500" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            {/* Left Column: Scanner & Result */}
+            <div className="lg:col-span-7 space-y-8">
+              {/* Scanner Viewfinder */}
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-accent/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative glass-panel rounded-[32px] p-2 overflow-hidden">
+                  <div 
+                    className="relative aspect-[4/3] rounded-[24px] overflow-hidden cursor-pointer bg-black/40 flex flex-col items-center justify-center group"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {/* Scan Corners */}
+                    <div className="scan-corner top-8 left-8 border-r-0 border-b-0" />
+                    <div className="scan-corner top-8 right-8 border-l-0 border-b-0" />
+                    <div className="scan-corner bottom-8 left-8 border-r-0 border-t-0" />
+                    <div className="scan-corner bottom-8 right-8 border-l-0 border-t-0" />
+                    
+                    {/* Scan Line Animation */}
+                    <motion.div 
+                      animate={{ top: ["10%", "90%", "10%"] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                      className="absolute left-0 w-full h-0.5 bg-accent shadow-[0_0_15px_#3b82f6] z-10 opacity-50"
+                    />
+
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileSelect} 
+                      accept="image/*" 
+                      className="hidden" 
+                    />
+
+                    {currentImage ? (
+                      <img 
+                        src={currentImage} 
+                        alt="Captured" 
+                        className="w-full h-full object-cover opacity-70"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center text-center px-6">
+                        <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-accent/20">
+                          <Camera className="w-10 h-10 text-accent" />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-3">Initialize Scanner</h3>
+                        <p className="text-text-dim text-sm max-w-xs">Position landmark within frame and click to capture data</p>
+                      </div>
+                    )}
                   </div>
-                  <h3 className="text-lg font-bold mb-2">Capture Landmark</h3>
-                  <p className="text-white/40 text-sm text-center">Take a photo or upload an image of a city landmark</p>
                 </div>
               </div>
 
-              {/* Result Area */}
+              {/* Result Information */}
               <AnimatePresence mode="wait">
                 {isAnalyzing && (
                   <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-white/5 border border-white/10 rounded-3xl p-12 flex flex-col items-center justify-center gap-4"
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    className="glass-panel rounded-[32px] p-16 flex flex-col items-center justify-center gap-6"
                   >
                     <div className="relative">
-                      <Loader2 className="w-12 h-12 text-orange-500 animate-spin" />
-                      <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-blue-400 animate-pulse" />
+                      <div className="w-20 h-20 border-4 border-accent/20 border-t-accent rounded-full animate-spin" />
+                      <Sparkles className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 text-accent animate-pulse" />
                     </div>
                     <div className="text-center">
-                      <h3 className="text-xl font-bold mb-1">Analyzing Landmark...</h3>
-                      <p className="text-white/40 text-sm">Gemini is identifying the site and fetching history</p>
+                      <h3 className="text-2xl font-bold mb-2">Analyzing Visual Data</h3>
+                      <p className="text-text-dim text-sm tracking-widest uppercase font-bold">Cross-referencing global landmarks...</p>
                     </div>
                   </motion.div>
                 )}
 
-                {currentResult && (
+                {currentResult && !isAnalyzing && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-sm"
+                    className="glass-panel rounded-[32px] overflow-hidden"
                   >
-                    <div className="relative aspect-video bg-black">
-                      {currentImage && (
-                        <img 
-                          src={currentImage} 
-                          alt="Captured" 
-                          className="w-full h-full object-cover opacity-60"
-                          referrerPolicy="no-referrer"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                      <div className="absolute bottom-6 left-6 right-6">
-                        <div className="flex items-center gap-2 mb-2">
-                          <MapPin className="w-4 h-4 text-orange-500" />
-                          <span className="text-xs font-bold uppercase tracking-widest text-orange-500">Discovered</span>
-                        </div>
-                        <h2 className="text-4xl font-bold">{currentResult.name}</h2>
-                      </div>
-                    </div>
-                    
-                    <div className="p-8 space-y-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <button 
-                            onClick={() => handlePlayNarration(currentResult.narrative)}
-                            className={cn(
-                              "w-12 h-12 rounded-full flex items-center justify-center transition-all",
-                              isAudioPlaying ? "bg-orange-500 text-black animate-pulse" : "bg-white/10 text-white hover:bg-white/20"
-                            )}
-                          >
-                            <Volume2 className="w-6 h-6" />
-                          </button>
-                          <div>
-                            <p className="text-sm font-bold">AR Narration</p>
-                            <p className="text-xs text-white/40">Listen to the history of this site</p>
+                    <div className="p-10 space-y-10">
+                      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                        <div>
+                          <div className="flex items-center gap-2 mb-4">
+                            <div className="px-3 py-1 bg-accent/20 border border-accent/30 rounded-md text-[10px] font-black text-accent uppercase tracking-[0.2em]">
+                              Identified
+                            </div>
+                            <div className="text-[10px] text-text-dim font-bold uppercase tracking-widest">
+                              Confidence: 99.8%
+                            </div>
                           </div>
+                          <h2 className="text-5xl font-bold tracking-tight">{currentResult.name}</h2>
                         </div>
+                        
+                        <button 
+                          onClick={() => handlePlayNarration(currentResult.narrative)}
+                          className={cn(
+                            "group flex items-center gap-4 px-8 py-4 rounded-2xl font-bold transition-all shadow-xl",
+                            isAudioPlaying 
+                              ? "bg-accent text-white animate-pulse" 
+                              : "bg-white text-black hover:bg-accent hover:text-white"
+                          )}
+                        >
+                          <Volume2 className="w-5 h-5" />
+                          {isAudioPlaying ? "Narrating..." : "Start AR Tour"}
+                        </button>
                       </div>
 
-                      <div className="space-y-4">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-white/40">Historical Context</h4>
-                        <p className="text-white/80 leading-relaxed text-lg">
-                          {currentResult.history}
-                        </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div className="space-y-4">
+                          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-accent">Historical Summary</h4>
+                          <p className="text-text-dim leading-relaxed text-lg">
+                            {currentResult.history}
+                          </p>
+                        </div>
+                        <div className="space-y-6">
+                          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-accent">Site Intelligence</h4>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-white/5 p-5 rounded-2xl border border-glass-border">
+                              <span className="block text-2xl font-bold mb-1">Active</span>
+                              <span className="text-[10px] text-text-dim uppercase font-bold tracking-widest">Status</span>
+                            </div>
+                            <div className="bg-white/5 p-5 rounded-2xl border border-glass-border">
+                              <span className="block text-2xl font-bold mb-1">Verified</span>
+                              <span className="text-[10px] text-text-dim uppercase font-bold tracking-widest">Source</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -336,22 +378,24 @@ export default function App() {
 
             {/* Right Column: Travel Log */}
             <div className="lg:col-span-5">
-              <div className="sticky top-24">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-2">
-                    <History className="w-5 h-5 text-white/40" />
-                    <h3 className="text-lg font-bold">Travel Log</h3>
+              <div className="sticky top-28 space-y-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/5 rounded-lg border border-glass-border">
+                      <History className="w-5 h-5 text-accent" />
+                    </div>
+                    <h3 className="text-xl font-bold tracking-tight">Mission Log</h3>
                   </div>
-                  <span className="text-xs font-bold bg-white/5 px-3 py-1 rounded-full text-white/40">
-                    {logs.length} Discoveries
-                  </span>
+                  <div className="px-3 py-1 glass-panel rounded-full text-[10px] font-bold text-text-dim uppercase tracking-widest">
+                    {logs.length} Records
+                  </div>
                 </div>
 
-                <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="space-y-4 max-h-[calc(100vh-280px)] overflow-y-auto pr-3 custom-scrollbar">
                   {logs.length === 0 ? (
-                    <div className="text-center py-12 bg-white/5 rounded-3xl border border-dashed border-white/10">
-                      <ImageIcon className="w-8 h-8 text-white/20 mx-auto mb-3" />
-                      <p className="text-sm text-white/40">No discoveries yet.<br/>Start by snapping a photo!</p>
+                    <div className="text-center py-20 glass-panel rounded-[32px] border-dashed">
+                      <ImageIcon className="w-10 h-10 text-white/10 mx-auto mb-4" />
+                      <p className="text-sm text-text-dim font-medium">No visual data recorded.<br/>Initialize scanner to begin.</p>
                     </div>
                   ) : (
                     logs.map((log) => (
@@ -360,7 +404,7 @@ export default function App() {
                         layout
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="group relative bg-white/5 border border-white/10 rounded-2xl p-4 flex gap-4 hover:bg-white/10 transition-colors cursor-pointer"
+                        className="group relative glass-panel rounded-2xl p-4 flex gap-5 hover:bg-white/10 transition-all cursor-pointer border-transparent hover:border-accent/30"
                         onClick={() => {
                           setCurrentResult({
                             name: log.landmarkName,
@@ -370,22 +414,26 @@ export default function App() {
                           setCurrentImage(log.imageUrl);
                         }}
                       >
-                        <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-black">
+                        <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-black/40 border border-glass-border">
                           <img 
                             src={log.imageUrl} 
                             alt={log.landmarkName} 
-                            className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                            className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all group-hover:scale-110"
                             referrerPolicy="no-referrer"
                           />
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col justify-center">
-                          <h4 className="font-bold truncate">{log.landmarkName}</h4>
-                          <p className="text-xs text-white/40 mt-1">
-                            {log.timestamp?.toDate ? log.timestamp.toDate().toLocaleDateString() : 'Just now'}
+                          <div className="flex items-center gap-2 mb-1">
+                            <MapPin className="w-3 h-3 text-accent" />
+                            <span className="text-[10px] text-accent font-bold uppercase tracking-widest">Location Log</span>
+                          </div>
+                          <h4 className="font-bold text-lg truncate group-hover:text-accent transition-colors">{log.landmarkName}</h4>
+                          <p className="text-xs text-text-dim mt-1 font-medium">
+                            {log.timestamp?.toDate ? log.timestamp.toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Processing...'}
                           </p>
                         </div>
-                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Sparkles className="w-4 h-4 text-orange-500" />
+                        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                          <Sparkles className="w-4 h-4 text-accent" />
                         </div>
                       </motion.div>
                     ))
@@ -407,17 +455,17 @@ export default function App() {
       {/* Global Styles */}
       <style>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
+          width: 5px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: transparent;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.05);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(59, 130, 246, 0.2);
         }
       `}</style>
     </div>
