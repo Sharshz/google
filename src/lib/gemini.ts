@@ -6,6 +6,7 @@ export interface LandmarkInfo {
   name: string;
   history: string;
   narrative: string;
+  keyFacts: string[];
 }
 
 export async function analyzeLandmark(base64Image: string): Promise<LandmarkInfo> {
@@ -30,7 +31,7 @@ export async function analyzeLandmark(base64Image: string): Promise<LandmarkInfo
   // 2. Fetch history and create narrative using Flash with Search Grounding
   const historyResponse = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `Tell me the history of ${landmarkName}. Provide a concise historical summary and then a separate short, engaging narrative script (about 3-4 sentences) that sounds like an AR tour guide.`,
+    contents: `Tell me the history of ${landmarkName}. Provide a concise historical summary, a separate short narrative script (3-4 sentences), and 3-4 short "key facts" (max 10 words each) suitable for an AR overlay.`,
     config: {
       tools: [{ googleSearch: {} }],
       responseMimeType: "application/json",
@@ -39,8 +40,12 @@ export async function analyzeLandmark(base64Image: string): Promise<LandmarkInfo
         properties: {
           history: { type: Type.STRING },
           narrative: { type: Type.STRING },
+          keyFacts: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING }
+          }
         },
-        required: ["history", "narrative"],
+        required: ["history", "narrative", "keyFacts"],
       },
     },
   });
@@ -51,6 +56,7 @@ export async function analyzeLandmark(base64Image: string): Promise<LandmarkInfo
     name: landmarkName,
     history: data.history || "History not available.",
     narrative: data.narrative || "Welcome to this historic site.",
+    keyFacts: data.keyFacts || [],
   };
 }
 

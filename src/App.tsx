@@ -15,6 +15,7 @@ interface TravelLog {
   landmarkName: string;
   history: string;
   narrative: string;
+  keyFacts: string[];
   timestamp: any;
 }
 
@@ -119,6 +120,7 @@ export default function App() {
         landmarkName: result.name,
         history: result.history,
         narrative: result.narrative,
+        keyFacts: result.keyFacts,
         timestamp: serverTimestamp()
       });
 
@@ -276,12 +278,41 @@ export default function App() {
                     />
 
                     {currentImage ? (
-                      <img 
-                        src={currentImage} 
-                        alt="Captured" 
-                        className="w-full h-full object-cover opacity-70"
-                        referrerPolicy="no-referrer"
-                      />
+                      <>
+                        <img 
+                          src={currentImage} 
+                          alt="Captured" 
+                          className="w-full h-full object-cover opacity-70"
+                          referrerPolicy="no-referrer"
+                        />
+                        {/* AR Overlay */}
+                        {currentResult && !isAnalyzing && (
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="absolute inset-0 z-20 p-8 flex flex-col justify-end"
+                          >
+                            <div className="absolute top-10 left-1/2 -translate-x-1/2 bg-accent px-4 py-1 rounded-md text-[10px] font-black uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+                              Target Identified: {currentResult.name}
+                            </div>
+                            
+                            <div className="space-y-3 max-w-xs">
+                              {currentResult.keyFacts?.map((fact, i) => (
+                                <motion.div 
+                                  key={i}
+                                  initial={{ opacity: 0, x: -20 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: i * 0.1 }}
+                                  className="flex items-center gap-3 bg-black/60 backdrop-blur-md border border-accent/30 p-3 rounded-xl"
+                                >
+                                  <div className="w-1.5 h-1.5 bg-accent rounded-full shadow-[0_0_8px_#3b82f6]" />
+                                  <span className="text-xs font-bold tracking-wide">{fact}</span>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </>
                     ) : (
                       <div className="flex flex-col items-center text-center px-6">
                         <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform border border-accent/20">
@@ -409,7 +440,8 @@ export default function App() {
                           setCurrentResult({
                             name: log.landmarkName,
                             history: log.history,
-                            narrative: log.narrative
+                            narrative: log.narrative,
+                            keyFacts: log.keyFacts || []
                           });
                           setCurrentImage(log.imageUrl);
                         }}
