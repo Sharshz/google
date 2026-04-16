@@ -1,6 +1,8 @@
 {
-  "name": "",
-  "description": "",
-  "requestFramePermissions": [],
+  "name": "CityLens: AI Photo Guide",
+  "description": "A photo tourism app that identifies city landmarks, fetches their history via Google Search, and provides narrated AR-style experiences.",
+  "requestFramePermissions": [
+    "camera"
+  ],
   "majorCapabilities": []
 }

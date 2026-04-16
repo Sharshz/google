@@ -1,0 +1,65 @@
+{
+  "entities": {
+    "TravelLog": {
+      "title": "Travel Log",
+      "description": "A record of a visited landmark with its photo, identification, and history.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who created this log."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "The base64 data or URL of the photo taken."
+        },
+        "landmarkName": {
+          "type": "string",
+          "description": "The name of the recognized landmark."
+        },
+        "history": {
+          "type": "string",
+          "description": "The history of the landmark fetched via search."
+        },
+        "narrative": {
+          "type": "string",
+          "description": "The generated narrative script."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the log was created."
+        }
+      },
+      "required": ["userId", "imageUrl", "landmarkName", "history", "timestamp"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile information.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "photoURL": {
+          "type": "string"
+        }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "travelLogs/{logId}": {
+      "schema": "TravelLog",
+      "description": "Collection of all travel logs."
+    },
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles."
+    }
+  }
+}
