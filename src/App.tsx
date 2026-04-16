@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { auth, db, googleProvider } from './lib/firebase';
 import { signInWithPopup, signOut, onAuthStateChanged, User } from 'firebase/auth';
 import { collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, getDocFromServer, doc } from 'firebase/firestore';
-import { Camera, History, LogOut, MapPin, Sparkles, Volume2, Loader2, Image as ImageIcon, Trash2, X } from 'lucide-react';
+import { Camera, History, LogOut, MapPin, Sparkles, Volume2, Loader2, Image as ImageIcon, Trash2, X, Play, Pause } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { analyzeLandmark, generateNarration, LandmarkInfo } from './lib/gemini';
 import { cn } from './lib/utils';
@@ -29,6 +29,8 @@ export default function App() {
   const [currentResult, setCurrentResult] = useState<LandmarkInfo | null>(null);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [isAudioPaused, setIsAudioPaused] = useState(false);
+  const [audioVolume, setAudioVolume] = useState(1);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -54,6 +56,13 @@ export default function App() {
     }
     testConnection();
   }, []);
+
+  // Volume Sync
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = audioVolume;
+    }
+  }, [audioVolume]);
 
   // Fetch Logs
   useEffect(() => {
@@ -134,14 +143,27 @@ export default function App() {
   };
 
   const handlePlayNarration = async (text: string) => {
+    if (audioRef.current && audioRef.current.src && isAudioPlaying) {
+      if (isAudioPaused) {
+        audioRef.current.play();
+        setIsAudioPaused(false);
+      } else {
+        audioRef.current.pause();
+        setIsAudioPaused(true);
+      }
+      return;
+    }
+
     try {
       setIsAudioPlaying(true);
+      setIsAudioPaused(false);
       const base64Audio = await generateNarration(text);
       const audioBlob = b64toBlob(base64Audio, 'audio/wav');
       const audioUrl = URL.createObjectURL(audioBlob);
       
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
+        audioRef.current.volume = audioVolume;
         audioRef.current.play();
       }
     } catch (error) {
@@ -353,7 +375,7 @@ export default function App() {
                     className="glass-panel rounded-[32px] overflow-hidden"
                   >
                     <div className="p-10 space-y-10">
-                      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                           <div className="flex items-center gap-2 mb-4">
                             <div className="px-3 py-1 bg-accent/20 border border-accent/30 rounded-md text-[10px] font-black text-accent uppercase tracking-[0.2em]">
@@ -366,18 +388,58 @@ export default function App() {
                           <h2 className="text-5xl font-bold tracking-tight">{currentResult.name}</h2>
                         </div>
                         
-                        <button 
-                          onClick={() => handlePlayNarration(currentResult.narrative)}
-                          className={cn(
-                            "group flex items-center gap-4 px-8 py-4 rounded-2xl font-bold transition-all shadow-xl",
-                            isAudioPlaying 
-                              ? "bg-accent text-white animate-pulse" 
-                              : "bg-white text-black hover:bg-accent hover:text-white"
+                        <div className="flex flex-col gap-4 min-w-[240px]">
+                          <div className="flex items-center gap-3">
+                            <button 
+                              onClick={() => handlePlayNarration(currentResult.narrative)}
+                              className={cn(
+                                "group flex items-center justify-center gap-3 px-6 py-3.5 rounded-2xl font-bold transition-all shadow-xl flex-1",
+                                isAudioPlaying 
+                                  ? (isAudioPaused ? "bg-white text-black" : "bg-accent text-white animate-pulse")
+                                  : "bg-white text-black hover:bg-accent hover:text-white"
+                              )}
+                            >
+                              {isAudioPlaying ? (
+                                isAudioPaused ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />
+                              ) : (
+                                <Volume2 className="w-5 h-5" />
+                              )}
+                              {isAudioPlaying ? (isAudioPaused ? "Resume" : "Pause") : "Start AR Tour"}
+                            </button>
+
+                            {isAudioPlaying && (
+                              <button 
+                                onClick={() => {
+                                  if (audioRef.current) {
+                                    audioRef.current.pause();
+                                    audioRef.current.currentTime = 0;
+                                    setIsAudioPlaying(false);
+                                    setIsAudioPaused(false);
+                                  }
+                                }}
+                                className="p-3.5 bg-white/5 hover:bg-white/10 rounded-2xl border border-glass-border text-text-dim transition-all"
+                                title="Stop Narration"
+                              >
+                                <X className="w-5 h-5" />
+                              </button>
+                            )}
+                          </div>
+
+                          {isAudioPlaying && (
+                            <div className="flex items-center gap-3 px-4 py-2 bg-white/5 rounded-xl border border-glass-border">
+                              <Volume2 className="w-4 h-4 text-text-dim" />
+                              <input 
+                                type="range" 
+                                min="0" 
+                                max="1" 
+                                step="0.01" 
+                                value={audioVolume}
+                                onChange={(e) => setAudioVolume(parseFloat(e.target.value))}
+                                className="flex-1 h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-accent"
+                              />
+                            </div>
                           )}
-                        >
-                          <Volume2 className="w-5 h-5" />
-                          {isAudioPlaying ? "Narrating..." : "Start AR Tour"}
-                        </button>
+                        </div>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -480,7 +542,10 @@ export default function App() {
       {/* Audio Element */}
       <audio 
         ref={audioRef} 
-        onEnded={() => setIsAudioPlaying(false)}
+        onEnded={() => {
+          setIsAudioPlaying(false);
+          setIsAudioPaused(false);
+        }}
         className="hidden" 
       />
 
